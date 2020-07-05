@@ -1,26 +1,38 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
-import * as Validator from 'class-validator';
-
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Category } from "./category.entity";
+import { TagVehicle } from "./tagVehicle.entity";
 
 @Index("name_UNIQUE", ["name"], { unique: true })
-@Entity("tag")
+@Index("tag_category_id", ["categoryId"], {})
+@Entity("tag", { schema: "auto_oglasi" })
 export class Tag {
   @PrimaryGeneratedColumn({ type: "int", name: "tag_id", unsigned: true })
   tagId: number;
 
-  @Column({  type: "varchar",unique: true, length: 128 })
-  @Validator.IsNotEmpty()
-  @Validator.IsString()
-  @Validator.Length(1,128)
+  @Column("varchar", { name: "name", unique: true, length: 128 })
   name: string;
 
-  @Column( { type: "int" })
-  @Validator.IsNotEmpty()
-  @Validator.IsPositive()
-  @Validator.IsNumber({
-    allowInfinity:false,
-    allowNaN: false, 
-    maxDecimalPlaces: 0  
+  @Column("int", { name: "category_id", unsigned: true })
+  categoryId: number;
+
+  @Column("varchar", { name: "type", length: 10 })
+  type: string;
+
+  @ManyToOne(() => Category, (category) => category.tags, {
+    onDelete: "RESTRICT",
+    onUpdate: "CASCADE",
   })
-  category: number;
+  @JoinColumn([{ name: "category_id", referencedColumnName: "categoryId" }])
+  category: Category;
+
+  @OneToMany(() => TagVehicle, (tagVehicle) => tagVehicle.tag)
+  tagVehicles: TagVehicle[];
 }

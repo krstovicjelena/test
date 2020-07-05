@@ -1,4 +1,6 @@
 import * as Validator from 'class-validator';
+import { Vehicle } from 'src/entities/vehicle.entity';
+import { VehicleTagComponentDto } from './vehicle.tag.component.dto';
 export class EditAdvertisementDto{
     @Validator.IsNotEmpty()
     @Validator.IsPositive()
@@ -11,7 +13,7 @@ export class EditAdvertisementDto{
 
     @Validator.IsNotEmpty()
     @Validator.IsString()
-    @Validator.Length(20,10000)
+    @Validator.Length(5,10000)
     description:string;
 
     @Validator.IsNotEmpty()
@@ -23,9 +25,12 @@ export class EditAdvertisementDto{
     })
     kilometer:number;
 
-    @Validator.IsString()
-    @Validator.Length(0,255)
-    tags:string;
+    @Validator.IsOptional()
+    @Validator.IsArray()
+    @Validator.ValidateNested({
+        always: true,
+    })
+    tags: VehicleTagComponentDto[] | null;
     
  
 

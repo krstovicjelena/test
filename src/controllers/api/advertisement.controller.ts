@@ -1,16 +1,16 @@
 import { Controller, Post, Body, Patch, Param, Get, UseInterceptors, UploadedFile } from "@nestjs/common";
 import { AdvertisementService } from "../../services/advertisement/advertisement.service";
-import { AddAdvertisementDto } from "src/dtos/advertisement/add.advertisement.dto";
-import { EditAdvertisementDto } from "src/dtos/advertisement/edit.advertisement.dto";
-import { Vehicle } from "src/entities/vehicle.entity";
-import { ApiResponse } from "src/misc/api.response.class";
-import { Advertisement } from "src/entities/advertisement.entity";
-import {FileInterceptor} from '@nestjs/platform-express';
-import {diskStorage} from 'multer';
-import { StorageConfig } from "config/storage.config";
-import { InjectRepository } from "@nestjs/typeorm";
+import { AddAdvertisementDto } from "../..//dtos/advertisement/add.advertisement.dto";
+import { EditAdvertisementDto } from "../..//dtos/advertisement/edit.advertisement.dto";
+import { Vehicle } from "../..//entities/vehicle.entity";
+import { ApiResponse } from "../..//misc/api.response.class";
+import { Advertisement } from "../..//entities/advertisement.entity";
+//mport {FileInterceptor} from '@nestjs/platform-express';
+//import {diskStorage} from 'multer';
+//import { StorageConfig } from "config/storage.config";
+
 import { Crud } from "@nestjsx/crud";
-import { AdvertisementSearchDto } from "src/dtos/advertisement/advertisement.search.dto";
+import { AdvertisementSearchDto } from "../..//dtos/advertisement/advertisement.search.dto";
 
 @Controller('api/advertisement')
 @Crud({

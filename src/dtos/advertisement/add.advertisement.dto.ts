@@ -1,5 +1,6 @@
 
 import * as Validator from 'class-validator';
+import { VehicleTagComponentDto } from './vehicle.tag.component.dto';
 export class AddAdvertisementDto{
     userId:number;
 
@@ -14,7 +15,7 @@ export class AddAdvertisementDto{
 
     @Validator.IsNotEmpty()
     @Validator.IsString()
-    @Validator.Length(20,10000)
+    @Validator.Length(5,10000)
     description:string;
 
 
@@ -69,10 +70,7 @@ export class AddAdvertisementDto{
     @Validator.IsIn(["Owner", "Agency"])
     seller: 'Owner' | "Agency";
 
-    @Validator.IsString()
-    @Validator.Length(0,255)
-    tags:string;
-    
+  
     vehicle_type_id:number;
     transmisson_id:number;
     model_id:number;
@@ -86,6 +84,14 @@ export class AddAdvertisementDto{
     maxDecimalPlaces: 0  
   })
   yearOfProduction: number;
+
+  categoryId: number;
+
+  @Validator.IsArray()
+  @Validator.ValidateNested({
+      always: true,
+  })
+  tags: VehicleTagComponentDto[];
     
 
 }

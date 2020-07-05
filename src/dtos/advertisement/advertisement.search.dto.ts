@@ -1,4 +1,5 @@
 import * as Validator from 'class-validator';
+import { TagVehicleSearchComponentDto } from './tag.vehicle.search.component.dto';
 
 export class AdvertisementSearchDto{
     @Validator.IsOptional()
@@ -131,6 +132,10 @@ export class AdvertisementSearchDto{
     @Validator.Length(3,30)
     color:string;
 
+    @Validator.IsOptional()
+    @Validator.IsString()
+    @Validator.Length(3,30)
+    category:string;
    
     @Validator.IsOptional()
     @Validator.IsPositive()
@@ -140,6 +145,9 @@ export class AdvertisementSearchDto{
       maxDecimalPlaces: 0  
     })
     page:number;
+
+    tags: TagVehicleSearchComponentDto[];
+    
 
     @Validator.IsOptional()
     @Validator.IsIn([5,10,25,50,75])

@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../../entities/user.entity";
-import { UserRegistrationDto } from "src/dtos/user/user.registration.dto";
-import { ApiResponse } from "src/misc/api.response.class";
+import { UserRegistrationDto } from "../../dtos/user/user.registration.dto";
+import { ApiResponse } from "../../misc/api.response.class";
 import * as crypto from 'crypto';
 
 @Injectable()

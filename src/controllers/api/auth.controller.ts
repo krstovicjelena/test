@@ -1,16 +1,16 @@
 import { Controller, Post, Body, Req, HttpException, HttpStatus, Put } from "@nestjs/common";
-import { LoginUserDto } from "src/dtos/user/login.user.dto";
-import { ApiResponse } from "src/misc/api.response.class";
+import { LoginUserDto } from "../../dtos/user/login.user.dto";
+import { ApiResponse } from "../../misc/api.response.class";
 import * as crypto from 'crypto';
-import { LoginInfoUserDto } from "src/dtos/auth/login.info.user.dto";
+import { LoginInfoUserDto } from "../../dtos/auth/login.info.user.dto";
 import * as jwt from 'jsonwebtoken';
 import { Request } from "express";
 import { jwtSecret } from "../../../config/jwt.secret";
 //import { JwtRefreshDataEmployeeDto } from "src/dtos/users/jwt.refresh.dto";
 //import { EmployeeRefreshTokenDto } from "src/dtos/users/user.refresh.token.dto";
-import { UserService } from "src/services/user/user.service";
-import { JwtDataUSerDto } from "src/dtos/auth/jwt.data.user.dto";
-import { UserRegistrationDto } from "src/dtos/user/user.registration.dto";
+import { UserService } from "../../services/user/user.service";
+import { JwtDataUSerDto } from "../../dtos/auth/jwt.data.user.dto";
+import { UserRegistrationDto } from "../../dtos/user/user.registration.dto";
 
 
  

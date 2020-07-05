@@ -11,13 +11,15 @@ import { Model } from './entities/model.entity';
 import { Tag } from './entities/tag.entity';
 import { Transmission } from './entities/transmission.entity';
 import { Vehicle } from './entities/vehicle.entity';
-import { VehicleType } from './entities/vehicleType.entity';
+
 import { Advertisement } from './entities/advertisement.entity';
 import {UserController} from './controllers/api/user.controller';
 import {AdvertisementController} from './controllers/api/advertisement.controller';
 import { AdvertisementService } from './services/advertisement/advertisement.service';
 import { AuthController } from './controllers/api/auth.controller';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { TagVehicle } from './entities/tagVehicle.entity';
+import { Category } from './entities/category.entity';
 
 @Module({
   imports: [
@@ -37,7 +39,8 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
         Transmission,
         User,
         Vehicle,
-        VehicleType,
+        TagVehicle,
+        Category,
         Advertisement
   
       ]
@@ -51,7 +54,9 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
       Transmission,
       User,
       Vehicle,
-      VehicleType,
+      TagVehicle,
+        Category,
+  
       Advertisement
 
     ])
@@ -64,7 +69,7 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
 })
 export class AppModule implements NestModule { //jedini nacin da koristimo mw je da implementriamo nestmodule interfejs
   configure(consumer:MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).exclude('auth/*').forRoutes('api/*'); 
+    consumer.apply(AuthMiddleware).exclude('auth/*','api/advertisement/search').forRoutes('api/*'); 
     //primeni ovaj mw na sve rute api/*, ali nemoj na auth/* jer nikad ne bismo dobili token
 
   }}

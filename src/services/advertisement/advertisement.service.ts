@@ -5,10 +5,11 @@ import { AddAdvertisementDto } from "../../dtos/advertisement/add.advertisement.
 import { ApiResponse } from "../../misc/api.response.class";
 import { Advertisement } from "../../entities/advertisement.entity";
 import { Vehicle } from "../../entities/vehicle.entity";
-import { EditAdvertisementDto } from "src/dtos/advertisement/edit.advertisement.dto";
+import { EditAdvertisementDto } from "../../dtos/advertisement/edit.advertisement.dto";
 import{TypeOrmCrudService} from "@nestjsx/crud-typeorm";
-import { AdvertisementSearchDto } from "src/dtos/advertisement/advertisement.search.dto";
-import { Model } from "src/entities/model.entity";
+import { AdvertisementSearchDto } from "../../dtos/advertisement/advertisement.search.dto";
+import { Model } from "../../entities/model.entity";
+import { TagVehicle } from "../../entities/tagVehicle.entity";
 
 
 @Injectable()
@@ -17,7 +18,8 @@ export class AdvertisementService extends TypeOrmCrudService<Advertisement>{
         
         @InjectRepository(Vehicle) private readonly vehicle:Repository<Vehicle>,
         @InjectRepository(Advertisement) private readonly adv:Repository<Advertisement>,
-        @InjectRepository(Model) private readonly model:Repository<Advertisement>
+        @InjectRepository(Model) private readonly model:Repository<Model>,
+        @InjectRepository(TagVehicle) private readonly tagv:Repository<TagVehicle>
         
 
     ){super(adv)}
@@ -36,16 +38,24 @@ export class AdvertisementService extends TypeOrmCrudService<Advertisement>{
         newVehicle.power=data.power;
         newVehicle.kilometer=data.kilometer;
         newVehicle.seller=data.seller;
-        newVehicle.tags=data.tags;
         newVehicle.transmissonId=data.transmisson_id;
-        newVehicle.vehicleTypeId=data.vehicle_type_id;
         newVehicle.modelId=data.model_id;
         newVehicle.fuelTypeId=data.fuel_type_id;
         newVehicle.userId=data.userId;
+        newVehicle.categoryId=data.userId;
         newVehicle.yearOfProduction=data.yearOfProduction;
         
 
         let savedVehicle = await this.vehicle.save(newVehicle);
+
+        
+        for (let tag of data.tags) {
+            let newTagVehicle: TagVehicle = new TagVehicle();
+            newTagVehicle.vehicleId = savedVehicle.vehicleId;
+            newTagVehicle.tagId = tag.tagId;
+
+            await this.tagv.save(newTagVehicle);
+        }
 
         let newAdvertisement:Advertisement = new Advertisement();
 
@@ -67,7 +77,9 @@ export class AdvertisementService extends TypeOrmCrudService<Advertisement>{
             })
         }
 
-        let v = await this.vehicle.findOne(a.vehicleId);
+        let v = await this.vehicle.findOne(a.vehicleId, {
+            relations: [ 'tagVehicles']
+        });
         if(v===undefined){
             return new Promise((resolve)=>{
                 resolve(new ApiResponse("error",-1003,"Ne postoji vozilo sa ovim id-jem"));
@@ -77,9 +89,33 @@ export class AdvertisementService extends TypeOrmCrudService<Advertisement>{
         v.price=data.price;
         v.kilometer=data.kilometer;
         v.description=data.description;
-        v.tags=data.tags;
 
-        return this.vehicle.save(v);
+        const savedVehicle=await this.vehicle.save(v);
+        if (!savedVehicle) {
+            return new ApiResponse('error', -5002, 'Could not save new vehicle data.');
+        }
+
+        
+        if (data.tags !== null) {
+            await this.tagv.remove(v.tagVehicles);
+
+            for (let tag of data.tags) {
+                let newTagVehicle: TagVehicle = new TagVehicle();
+                newTagVehicle.vehicleId = id;
+                newTagVehicle.tagId = tag.tagId;
+               
+    
+                await this.tagv.save(newTagVehicle);
+            }
+        }
+        return await this.vehicle.findOne(id, {
+            relations: [
+              
+                "tagVehicles"
+            ]
+        });
+
+      
 
     }
 
@@ -104,7 +140,9 @@ getById(id:number):Promise<Advertisement>{
 async search(data: AdvertisementSearchDto):Promise<Vehicle[]>{
     const builder = await this.vehicle.createQueryBuilder("vehicle");
    
-    builder.innerJoin("vehicle.vehicleType","vt");
+    builder.innerJoin("vehicle.tagVehicles","tv");
+    builder.innerJoin("vehicle.category","c");
+    builder.innerJoin("tv.tag","tg");
     builder.innerJoin("vehicle.transmisson","t");
     builder.innerJoin("vehicle.model","m");
     builder.innerJoin("vehicle.fuelType","ft");
@@ -113,8 +151,6 @@ async search(data: AdvertisementSearchDto):Promise<Vehicle[]>{
     
     
 
-
-    
     if(data.priceMin && typeof data.priceMin==='number' ){
         builder.where('vehicle.price >=:min ',{min:data.priceMin})
     }
@@ -169,6 +205,23 @@ async search(data: AdvertisementSearchDto):Promise<Vehicle[]>{
 
     if(data.model &&  data.model.length > 0  ){
         builder.andWhere('m.name LIKE :n ',{n:data.model})
+    }
+
+    
+    if(data.category &&  data.category.length > 0  ){
+        builder.andWhere('c.name LIKE :n ',{n:data.category})
+    }
+
+    if (data.tags && data.tags.length > 0) {
+        for (const tag of data.tags) {
+            builder.andWhere(
+                'tg.name = :tn',
+                {
+                    tn: tag.tagValue
+                    
+                }
+            );
+        }
     }
 
 
