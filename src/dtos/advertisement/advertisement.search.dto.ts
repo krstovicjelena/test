@@ -1,5 +1,6 @@
 import * as Validator from 'class-validator';
 import { TagVehicleSearchComponentDto } from './tag.vehicle.search.component.dto';
+import { CategoriesSearchComponentDto } from './categories.search.component.dto';
 
 export class AdvertisementSearchDto{
     @Validator.IsOptional()
@@ -19,7 +20,7 @@ export class AdvertisementSearchDto{
       maxDecimalPlaces: 0  
     })
     priceMax:number;
-    /*tags:string;*/
+    
 
     @Validator.IsOptional()
     @Validator.IsString()
@@ -59,10 +60,10 @@ export class AdvertisementSearchDto{
     @Validator.IsString()
     fuel:string;
 
-   /* @Validator.IsOptional()
+    @Validator.IsOptional()
     @Validator.IsString()
     @Validator.IsIn(["Owner", "Agency"])
-    seller: 'Owner' | 'Agency';*/
+    seller: 'Owner' | 'Agency';
 
     @Validator.IsOptional()
     @Validator.IsPositive()
@@ -132,10 +133,7 @@ export class AdvertisementSearchDto{
     @Validator.Length(3,30)
     color:string;
 
-    @Validator.IsOptional()
-    @Validator.IsString()
-    @Validator.Length(3,30)
-    category:string;
+   
    
     @Validator.IsOptional()
     @Validator.IsPositive()
@@ -146,7 +144,9 @@ export class AdvertisementSearchDto{
     })
     page:number;
 
+    
     tags: TagVehicleSearchComponentDto[];
+    categories: CategoriesSearchComponentDto[];
     
 
     @Validator.IsOptional()

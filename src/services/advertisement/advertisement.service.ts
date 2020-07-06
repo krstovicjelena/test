@@ -152,15 +152,16 @@ async search(data: AdvertisementSearchDto):Promise<Vehicle[]>{
     
 
     if(data.priceMin && typeof data.priceMin==='number' ){
-        builder.where('vehicle.price >=:min ',{min:data.priceMin})
+        builder.where('vehicle.price >=:min ',{min:data.priceMin}) 
     }
 
     if(data.priceMax && typeof data.priceMax==='number' ){
-        builder.andWhere('vehicle.price <=:max ',{max:data.priceMax})
+        builder.andWhere('vehicle.price <=:max ',{max:data.priceMax}) 
     }
 
+    
     if(data.yearOfProductionMin && typeof data.yearOfProductionMin==='number' ){
-        builder.andWhere('vehicle.yearOfProduction>=:ymin ',{ymin:data.yearOfProductionMin})
+        builder.andWhere('vehicle.yearOfProduction >= :ymin ',{ymin:data.yearOfProductionMin})
     }
 
     if(data.yearOfProductionMax && typeof data.yearOfProductionMax==='number' ){
@@ -207,10 +208,6 @@ async search(data: AdvertisementSearchDto):Promise<Vehicle[]>{
         builder.andWhere('m.name LIKE :n ',{n:data.model})
     }
 
-    
-    if(data.category &&  data.category.length > 0  ){
-        builder.andWhere('c.name LIKE :n ',{n:data.category})
-    }
 
     if (data.tags && data.tags.length > 0) {
         for (const tag of data.tags) {
@@ -218,6 +215,18 @@ async search(data: AdvertisementSearchDto):Promise<Vehicle[]>{
                 'tg.name = :tn',
                 {
                     tn: tag.tagValue
+                    
+                }
+            );
+        }
+    }
+
+    if (data.categories && data.categories.length > 0) {
+        for (const ct of data.categories) {
+            builder.andWhere(
+                'c.name = :cn',
+                {
+                    cn: ct.categoryValue
                     
                 }
             );
